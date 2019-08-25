@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="the-wall-crud">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <property name="context-root" value="the-wall-crud"/>
+        <property name="java-output-path" value="/the-wall-crud/br.com.les.thewallcrud"/>
+    </wb-module>
+</project-modules>
