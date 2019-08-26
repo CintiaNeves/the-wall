@@ -29,6 +29,9 @@
 	border: 0;
 	background-color: rgba(0, 0, 0, 0);
 }
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: #c1c1c1;
+}
 </style>
 
 </head>
@@ -108,11 +111,11 @@
 
 				</div>
 			</div>
-			<div class="col-md-12 form-group p_star">
+			<div class="col-md-11 form-group p_star">
 				<h3>Documento de Entrada</h3>
 			</div>
-			<div id="entrada-estoque" class="col-md-12 form-group p_star">
-				<form action="entrada" method="post">
+			<form action="entrada" method="post">
+				<div id="entrada-estoque" class="col-md-12 form-group p_star">
 					<div id="cabecalho" class="col-md-11">
 						<div class="row">
 							<div class="col-md-3 form-group p_star">
@@ -132,65 +135,75 @@
 						</div>
 					</div>
 					<br />
+				</div>
 
-					<div class="col-md-12 form-group p_star">
-						<h3>Itens</h3>
+				<div class="col-md-11 form-group p_star">
+					<h3>Itens</h3>
+				</div>
+				<div id="itens" class="col-md-11">
+					<div id="mensagem">
 					</div>
-					<div id="itens" class="col-md-11">
-						<table class="table ">
-							<thead class="thead-dark">
-								<tr>
-									<th>Código</th>
-									<th>Descrição</th>
-									<th>Quantidade</th>
-									<th>Custo Unitário</th>
-									<th>Total</th>
-								</tr>
-							</thead>
-							<tbody id="tbody_itens">
-								<tr>
-									<td class="m-0 p-0 pt-1">
-										<input class="form-control input-transparent" name="codigo" id="codigo"/>
-									</td>
-									<td class="m-0 p-0 pt-1">
-										<input class="form-control input-transparent" name="descricao" id="descricao" readonly/>
-									</td>
-									<td class="m-0 p-0 pt-1">
-										<input class="form-control input-transparent" name="quantidade" id="quantidade" />
-									</td>
-									<td class="m-0 p-0 pt-1">
-										<input class="form-control input-transparent" name="custo" id="custo"/>
-									</td>
-									<td>
-										<input class="form-control input-transparent" name="total" id="total" readonly/>
-									</td>
-							</tbody>
-						</table>
-						<div class="col-md-11">
-							<button class="btn btn-secondary" type="button" name="adicionar" id="adicionar">Adicionar
-								Item</button>
-						</div>
+					<table class="table table-striped">
+						<thead class="thead-dark">
+							<tr>
+								<th>Código</th>
+								<th>Descrição</th>
+								<th>Quantidade</th>
+								<th>Custo Unitário</th>
+								<th>Total</th>
+								<th>Ações</th>
+							</tr>
+						</thead>
+						<tbody id="tbody_itens">
+							<tr>
+								<td class="m-0 p-0 pt-1">
+									<input class="form-control input-transparent" name="codigo" id="codigo"/>
+								</td>
+								<td class="m-0 p-0 pt-1">
+									<label class="form-control input-transparent" id="descricao"></label>
+								</td>
+								<td class="m-0 p-0 pt-1">
+									<input class="form-control input-transparent" name="quantidade" id="quantidade" />
+								</td>
+								<td class="m-0 p-0 pt-1">
+									<input class="form-control input-transparent" name="custo" id="custo"/>
+								</td>
+								<td class="m-0 p-0 pt-1">
+									<label class="form-control input-transparent" id="total"></label>
+								</td>
+								<td class="m-0 p-0 pt-1">
+									<button type="button" onclick="remover(this)" class="btn btn-link">Remover</button>
+								</td>
+						</tbody>
+					</table>
+					<div class="col-md-11">
+						<button class="btn btn-secondary" type="button" name="adicionar" id="adicionar">Adicionar
+							Item</button>
 					</div>
-					<br/>
-					<br/>
-					<div class="col-md-3 form-group p_star">
-						<div class="col p-1 justify-content-end p-1">
-							<label for="codigo">Total Nota</label> 
-							<input class="form-control" type="text" name="totalNota" id="totalNota" />
-						</div>
+				</div>
+				<br/>
+				<div class="float-right col-md-3 form-group p_star mr-5 pr-5">
+					<div class="col justify-content-end mr-4 pr-4">
+						<label for="codigo">Total Nota</label> 
+						<input class="form-control right" type="text" name="totalNota" id="totalNota" />
 					</div>
-					<div
-						class="row justify-content-end p-1 col-md-11 form-group p_star">
-						<button class="btn btn-link" type="submit" name="btnOperacao" value="SALVAR">Gravar Entrada</button>
-					</div>
-				</form>
-			</div>
+				</div>
+				<div
+					class="row justify-content-end p-1 col-md-11 form-group p_star">
+					<button class="btn btn-primary" type="submit" name="btnOperacao" value="SALVAR">Gravar Entrada</button>
+				</div>
+			</form>
 		</div>
 	</section>
 	<!--================End Form Cadastro Area =================-->
 
 </body>
 <script>
+// remover linha da tabela de regitros
+function remover(button) {
+	$("#tbody_itens")[0].removeChild(button.parentElement.parentElement);
+	$("#tbody_itens").change();
+}
 
 $("#cnpj").change(function() {
 	let cnpj = this.value;
@@ -205,8 +218,14 @@ $("#cnpj").change(function() {
 			cnpj: cnpj,
 		},
 		success: function(response) {
-			$("#data").val(response.data);
-			$("#razaoSocial").val(response.razaoSocial);
+			if(response.erro) {
+				$("#mensagem").innerHTML = response.erro;
+				$("#mensagem").removeAttr("style");
+				$("#mensagem").addClass("alert alert-danger");
+			} else {
+				$("#data").val(response.data);
+				$("#razaoSocial").val(response.razaoSocial);				
+			}
 		},
 		error: function(error) {
 			console.log(error);
@@ -215,7 +234,11 @@ $("#cnpj").change(function() {
 });
 
 $("#tbody_itens").change(function(){
-	let totalNota;
+	let totalNota = 0;
+	if(this.rows.length === 0) {
+		$("#totalNota").val((0).toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' }));
+		$("#linhas").val(tbody_itens.children.length);
+	}
 	for(row of this.rows) {
 		if(row.children[0].children[0].value) {
 			let codigo = row.children[0].children[0].value;
@@ -230,7 +253,13 @@ $("#tbody_itens").change(function(){
 					codigo: codigo
 				},
 				success: function(response) {
-					row.children[1].children[0].value = response.descricao;
+					if(response.erro) {
+						$("#mensagem").removeAttr("style");
+						$("#mensagem").addClass("alert alert-danger");
+						$("#mensagem")[0].innerText = response.erro;
+					} else {
+						row.children[1].children[0].innerHTML = response.descricao;
+					}
 				},
 				error: function(error) {
 					console.log(error);
@@ -240,11 +269,11 @@ $("#tbody_itens").change(function(){
 		let total = row.children[4].children[0].value;
 		total = row.children[2].children[0].value * row.children[3].children[0].value;
 		totalNota += total;
-		row.children[4].children[0].value = Number(total).toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' });
-		
+		totalFormatado = Number(total).toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' });
+		row.children[4].children[0].innerHTML = totalFormatado;
+		$("#totalNota").val(totalNota.toLocaleString("pt-BR", { style: 'currency', currency: 'BRL' }));
+		$("#linhas").val(tbody_itens.children.length);
 	}
-	$("#totalNota").val(totalNota);
-	$("#linhas").val(tbody_itens.children.length)
 });
 
 $("#adicionar").click(function(){
@@ -255,16 +284,19 @@ $("#adicionar").click(function(){
 			"<input class='form-control input-transparent' name='codigo" + rowCount + "' id='codigo" + rowCount + "'>" +
 		"</td>" +
 		"<td class='m-0 p-0 pt-1'>" +
-		"<input class='form-control input-transparent' name='descricao" + rowCount + "' id='descricao" + rowCount + "' readonly>" +
+			"<label class='form-control input-transparent' id='descricao'></label>" +
 		"</td>" +
 		"<td class='m-0 p-0 pt-1'>" +
-		"<input class='form-control input-transparent' name='quantidade" + rowCount + "' id='quantidade" + rowCount + "'>" +
+			"<input class='form-control input-transparent' name='quantidade" + rowCount + "' id='quantidade" + rowCount + "'>" +
 		"</td>" +
 		"<td class='m-0 p-0 pt-1'>" +
-		"<input class='form-control input-transparent' name='custo" + rowCount + "' id='custo" + rowCount + "'>" +
+			"<input class='form-control input-transparent' name='custo" + rowCount + "' id='custo" + rowCount + "'>" +
 		"</td>" +
 		"<td class='m-0 p-0 pt-1'>" +
-		"<input class='form-control input-transparent' name='total" + rowCount + "' id='total" + rowCount + "' readonly>" +
+			"<label class='form-control input-transparent' id='total'></label>" +
+		"</td>" +
+		"<td class='m-0 p-0 pt-1'>" +
+			"<button type='button' onclick='remover(this)' class='btn btn-link'>Remover</button>" +
 		"</td>" +
 	"</tr>";
 	$("#tbody_itens").append(row);

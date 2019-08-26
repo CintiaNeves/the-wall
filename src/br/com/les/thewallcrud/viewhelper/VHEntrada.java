@@ -85,7 +85,6 @@ public class VHEntrada implements IViewHelper {
 				}
 				rd.forward(request, response);
 			} else if (operacao.equals("CONSULTAR")) {
-				
 				if(request.getParameter("retornoJson") != null && Boolean.parseBoolean(request.getParameter("retornoJson")) == true) {
 					response.addHeader("Access-Control-Allow-Origin", "*");
 					response.setContentType("application/json");

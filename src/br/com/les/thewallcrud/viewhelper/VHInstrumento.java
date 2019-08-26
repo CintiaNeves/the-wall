@@ -85,7 +85,12 @@ public class VHInstrumento implements IViewHelper {
 					response.setCharacterEncoding("utf-8");
 					ObjectMapper mapper = new ObjectMapper();
 					try {
-						String json = mapper.writeValueAsString(resultado.getEntidade());
+						String json = null;
+						if(resultado.getErro()) {
+							json = "{\"erro\":\"".concat(resultado.getMensagem().concat("\"}"));
+						} else {
+							json = mapper.writeValueAsString(resultado.getEntidade());
+						}
 						response.getWriter().write(json);
 						response.getWriter().flush();
 					} catch (JsonProcessingException e) {
